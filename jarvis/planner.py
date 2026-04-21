@@ -249,33 +249,33 @@ def _classify_planning_mode_heuristic(text: str) -> PlanningDecision:
 
 QUESTION_MAP = {
     "build": [
-        {"key": "project", "q": "Which project, sir?", "default": None},
-        {"key": "tech_stack", "q": "React or vanilla?", "default": "React + Tailwind"},
-        {"key": "details", "q": "Any specific sections or features?", "default": None},
+        {"key": "project", "q": "Qual projeto, senhor?", "default": None},
+        {"key": "tech_stack", "q": "React ou vanilla?", "default": "React + Tailwind"},
+        {"key": "details", "q": "Alguma seção ou funcionalidade específica?", "default": None},
     ],
     "fix": [
-        {"key": "project", "q": "Which project, sir?", "default": None},
-        {"key": "error", "q": "What error are you seeing?", "default": None},
-        {"key": "expected", "q": "What should it do instead?", "default": None},
+        {"key": "project", "q": "Qual projeto, senhor?", "default": None},
+        {"key": "error", "q": "Qual erro o senhor está vendo?", "default": None},
+        {"key": "expected", "q": "O que deveria acontecer em vez disso?", "default": None},
     ],
     "research": [
-        {"key": "depth", "q": "Quick overview or deep dive, sir?", "default": "quick overview"},
-        {"key": "sources", "q": "Any specific sources to check?", "default": None},
-        {"key": "output_format", "q": "Want a summary or a full report?", "default": "summary"},
+        {"key": "depth", "q": "Visão geral rápida ou análise aprofundada, senhor?", "default": "visão geral rápida"},
+        {"key": "sources", "q": "Alguma fonte específica a consultar?", "default": None},
+        {"key": "output_format", "q": "Prefere um resumo ou um relatório completo?", "default": "resumo"},
     ],
     "refactor": [
-        {"key": "project", "q": "Which project, sir?", "default": None},
-        {"key": "target", "q": "Which file or module?", "default": None},
-        {"key": "goal", "q": "What's the goal — performance, readability, or structure?", "default": "readability"},
+        {"key": "project", "q": "Qual projeto, senhor?", "default": None},
+        {"key": "target", "q": "Qual arquivo ou módulo?", "default": None},
+        {"key": "goal", "q": "Qual o objetivo — performance, legibilidade ou estrutura?", "default": "legibilidade"},
     ],
     "run": [
-        {"key": "project", "q": "Which project, sir?", "default": None},
-        {"key": "command", "q": "Any specific command?", "default": None},
+        {"key": "project", "q": "Qual projeto, senhor?", "default": None},
+        {"key": "command", "q": "Algum comando específico?", "default": None},
     ],
     "feature": [
-        {"key": "project", "q": "Which project, sir?", "default": None},
-        {"key": "details", "q": "Can you describe the feature briefly?", "default": None},
-        {"key": "tech_stack", "q": "Any tech preferences?", "default": None},
+        {"key": "project", "q": "Qual projeto, senhor?", "default": None},
+        {"key": "details", "q": "Pode descrever a funcionalidade brevemente?", "default": None},
+        {"key": "tech_stack", "q": "Alguma preferência de tecnologia?", "default": None},
     ],
 }
 
@@ -611,7 +611,7 @@ class TaskPlanner:
         if plan.answers.get("tech_stack"):
             parts.append(f"using {plan.answers['tech_stack']}")
 
-        summary = " ".join(parts) + ". Shall I proceed, sir?"
+        summary = " ".join(parts) + ". Posso prosseguir, senhor?"
         return summary
 
     async def build_prompt(self) -> str:

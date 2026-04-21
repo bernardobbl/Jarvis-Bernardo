@@ -348,19 +348,19 @@ def format_unread_summary(unread: dict) -> str:
     """Format unread counts for voice."""
     total = unread["total"]
     if total == 0:
-        return "Inbox is clear, sir. No unread messages."
+        return "Caixa de entrada vazia, senhor. Nenhuma mensagem não lida."
 
     parts = []
     for acct, count in unread["accounts"].items():
         if count > 0:
-            parts.append(f"{count} in {acct}")
+            parts.append(f"{count} em {acct}")
 
     if len(parts) == 1:
-        return f"You have {total} unread {'message' if total == 1 else 'messages'} — {parts[0]}."
+        return f"O senhor tem {total} {'mensagem' if total == 1 else 'mensagens'} não lida{'s' if total != 1 else ''} — {parts[0]}."
     elif parts:
-        return f"You have {total} unread messages: {', '.join(parts)}."
+        return f"O senhor tem {total} mensagens não lidas: {', '.join(parts)}."
     else:
-        return f"You have {total} unread {'message' if total == 1 else 'messages'}."
+        return f"O senhor tem {total} {'mensagem' if total == 1 else 'mensagens'} não lida{'s' if total != 1 else ''}."
 
 
 def format_messages_for_context(messages: list[dict], label: str = "Recent emails") -> str:
@@ -385,23 +385,23 @@ def format_messages_for_context(messages: list[dict], label: str = "Recent email
 def format_messages_for_voice(messages: list[dict]) -> str:
     """Format messages for voice response."""
     if not messages:
-        return "No messages to report, sir."
+        return "Nenhuma mensagem a relatar, senhor."
 
     count = len(messages)
     if count == 1:
         m = messages[0]
         sender = _short_sender(m["sender"])
-        return f"One message from {sender}: {m['subject']}."
+        return f"Uma mensagem de {sender}: {m['subject']}."
 
     summaries = []
     for m in messages[:5]:
         sender = _short_sender(m["sender"])
-        summaries.append(f"{sender} regarding {m['subject']}")
+        summaries.append(f"{sender} sobre {m['subject']}")
 
-    result = f"You have {count} messages. "
+    result = f"O senhor tem {count} mensagens. "
     result += ". ".join(summaries[:3])
     if count > 3:
-        result += f". And {count - 3} more."
+        result += f". E mais {count - 3}."
     return result
 
 

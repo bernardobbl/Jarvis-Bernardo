@@ -245,24 +245,24 @@ def format_events_for_context(events: list[dict]) -> str:
 def format_schedule_summary(events: list[dict]) -> str:
     """Format a brief voice-friendly summary of the schedule."""
     if not events:
-        return "Your schedule is clear today, sir."
+        return "Sua agenda está livre hoje, senhor."
 
     count = len(events)
     if count == 1:
         evt = events[0]
         if evt.get("all_day"):
-            return f"You have one all-day event: {evt['title']}."
-        return f"You have one event: {evt['title']} at {evt['start']}."
+            return f"O senhor tem um evento de dia inteiro: {evt['title']}."
+        return f"O senhor tem um evento: {evt['title']} às {evt['start']}."
 
     summaries = []
     for evt in events[:5]:
         if evt.get("all_day"):
-            summaries.append(f"{evt['title']} all day")
+            summaries.append(f"{evt['title']} o dia todo")
         else:
-            summaries.append(f"{evt['title']} at {evt['start']}")
+            summaries.append(f"{evt['title']} às {evt['start']}")
 
-    result = f"You have {count} events today. "
+    result = f"O senhor tem {count} eventos hoje. "
     result += ". ".join(summaries[:3])
     if count > 3:
-        result += f". And {count - 3} more."
+        result += f". E mais {count - 3}."
     return result

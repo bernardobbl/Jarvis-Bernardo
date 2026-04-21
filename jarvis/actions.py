@@ -109,7 +109,7 @@ async def open_terminal(command: str = "") -> dict:
         await _mark_terminal_as_jarvis()
     return {
         "success": success,
-        "confirmation": "Terminal is open, sir." if success else "I had trouble opening Terminal, sir.",
+        "confirmation": "Terminal aberto, senhor." if success else "Tive dificuldade em abrir o Terminal, senhor.",
     }
 
 
@@ -145,7 +145,7 @@ async def open_browser(url: str, browser: str = "chrome") -> dict:
         log.error(f"open_browser ({app_name}) failed: {stderr.decode()}")
     return {
         "success": success,
-        "confirmation": f"Pulled that up in {app_name}, sir." if success else f"{app_name} ran into a problem, sir.",
+        "confirmation": f"Abri no {app_name}, senhor." if success else f"{app_name} teve algum problema, senhor.",
     }
 
 
@@ -185,9 +185,9 @@ async def open_claude_in_project(project_dir: str, prompt: str) -> dict:
         await _mark_terminal_as_jarvis()
     return {
         "success": success,
-        "confirmation": "Claude Code is running in Terminal, sir. You can watch the progress."
+        "confirmation": "Claude Code está rodando no Terminal, senhor. O senhor pode acompanhar o progresso."
         if success
-        else "Had trouble spawning Claude Code, sir.",
+        else "Tive dificuldade em iniciar o Claude Code, senhor.",
     }
 
 
@@ -252,7 +252,7 @@ return "OK"
         if result == "NOT_FOUND":
             return {
                 "success": False,
-                "confirmation": f"Couldn't find a terminal for {project_name}, sir.",
+                "confirmation": f"Não encontrei um terminal para {project_name}, senhor.",
             }
 
         success = proc.returncode == 0
@@ -264,15 +264,15 @@ return "OK"
 
         return {
             "success": success,
-            "confirmation": f"Sent that to {project_name}, sir." if success
-            else f"Had trouble typing into {project_name}, sir.",
+            "confirmation": f"Enviado para {project_name}, senhor." if success
+            else f"Tive dificuldade em digitar no {project_name}, senhor.",
         }
 
     except asyncio.TimeoutError:
-        return {"success": False, "confirmation": "Terminal operation timed out, sir."}
+        return {"success": False, "confirmation": "A operação no terminal excedeu o tempo limite, senhor."}
     except Exception as e:
         log.error(f"prompt_existing_terminal failed: {e}")
-        return {"success": False, "confirmation": "Something went wrong reaching that terminal, sir."}
+        return {"success": False, "confirmation": "Algo deu errado ao acessar aquele terminal, senhor."}
 
 
 async def get_chrome_tab_info() -> dict:
@@ -318,7 +318,7 @@ async def monitor_build(project_dir: str, ws=None, synthesize_fn=None) -> None:
                 log.info(f"Build complete in {project_dir}")
                 if ws and synthesize_fn:
                     try:
-                        msg = "The build is complete, sir."
+                        msg = "A construção está concluída, senhor."
                         audio_bytes = await synthesize_fn(msg)
                         if audio_bytes:
                             encoded = base64.b64encode(audio_bytes).decode()

@@ -59,26 +59,29 @@ class ConversationMonitor:
 
             # Generic AI patterns that JARVIS shouldn't use
             bad_patterns = [
-                ("How can I help", "JARVIS doesn't ask 'how can I help' — he just acts"),
-                ("Is there anything else", "JARVIS doesn't ask 'is there anything else'"),
-                ("I'd be happy to", "Too corporate — JARVIS says 'Will do, sir' or just does it"),
-                ("Absolutely!", "JARVIS doesn't use filler enthusiasm"),
-                ("Great question", "JARVIS never says 'great question'"),
-                ("I don't have access", "JARVIS should say 'I'm afraid I don't have that information, sir'"),
+                ("Como posso ajudar", "JARVIS não pergunta 'como posso ajudar' — ele apenas age"),
+                ("Mais alguma coisa", "JARVIS não pergunta 'mais alguma coisa'"),
+                ("Fico feliz em ajudar", "Corporativo demais — JARVIS diz 'Pois não, senhor' ou simplesmente age"),
+                ("Com certeza!", "JARVIS não usa entusiasmo de preenchimento"),
+                ("Ótima pergunta", "JARVIS nunca diz 'ótima pergunta'"),
+                ("Não tenho acesso", "JARVIS deveria dizer 'Receio não dispor dessa informação, senhor'"),
+                ("Como uma IA", "JARVIS nunca sai do personagem"),
+                ("Não consigo", "JARVIS diz 'Receio que isso esteja fora do meu alcance, senhor'"),
+                ("How can I help", "JARVIS should respond in Portuguese"),
+                ("Great question", "JARVIS should respond in Portuguese"),
                 ("As an AI", "JARVIS never breaks character"),
-                ("I cannot", "JARVIS says 'I'm afraid that's beyond my current capabilities, sir'"),
             ]
             for pattern, issue in bad_patterns:
                 if pattern.lower() in text.lower():
                     self.flag(f"BAD PATTERN: '{pattern}' detected. {issue}")
 
-            # Not using "sir" enough?
+            # Not using "senhor" enough?
             jarvis_msgs = [m for m in self.messages if m["role"] == "jarvis"]
             if len(jarvis_msgs) >= 5:
                 recent = jarvis_msgs[-5:]
-                sir_count = sum(1 for m in recent if "sir" in m["text"].lower())
-                if sir_count < 1:
-                    self.flag("JARVIS hasn't said 'sir' in the last 5 responses — should use it more")
+                senhor_count = sum(1 for m in recent if "senhor" in m["text"].lower())
+                if senhor_count < 1:
+                    self.flag("JARVIS hasn't said 'senhor' in the last 5 responses — should use it more")
 
             # Forgot context?
             if prev and prev["role"] == "user":

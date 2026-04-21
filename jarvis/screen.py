@@ -197,7 +197,7 @@ async def describe_screen(anthropic_client) -> str:
     apps = await get_running_apps()
 
     if not windows and not apps:
-        return "I wasn't able to see your screen, sir. Screen recording permission may be needed."
+        return "Não consegui ver a sua tela, senhor. Pode ser necessária a permissão de gravação de tela."
 
     # Build a text description for LLM to summarize
     context_parts = []
@@ -218,8 +218,8 @@ async def describe_screen(anthropic_client) -> str:
                 model="claude-haiku-4-5-20251001",
                 max_tokens=100,
                 system=(
-                    "You are JARVIS. Given the user's open windows and apps, summarize "
-                    "what they appear to be working on in 1-2 sentences. Natural voice, no markdown."
+                    "You are JARVIS. Respond in Brazilian Portuguese. Given the user's open windows and apps, summarize "
+                    "what they appear to be working on in 1-2 sentences. Natural voice in Portuguese, no markdown. Address the user as 'senhor'."
                 ),
                 messages=[{"role": "user", "content": "Open windows:\n" + "\n".join(context_parts)}],
             )
@@ -230,12 +230,12 @@ async def describe_screen(anthropic_client) -> str:
     # Raw fallback
     if windows:
         active = next((w for w in windows if w["frontmost"]), None)
-        result = f"You have {len(windows)} windows open across {len(set(w['app'] for w in windows))} apps."
+        result = f"O senhor tem {len(windows)} janelas abertas em {len(set(w['app'] for w in windows))} aplicativos."
         if active:
-            result += f" Currently focused on {active['app']}: {active['title']}."
+            result += f" No momento com foco em {active['app']}: {active['title']}."
         return result
 
-    return f"Running apps: {', '.join(apps)}. Couldn't read window titles, sir."
+    return f"Apps em execução: {', '.join(apps)}. Não consegui ler os títulos das janelas, senhor."
 
 
 def format_windows_for_context(windows: list[dict]) -> str:

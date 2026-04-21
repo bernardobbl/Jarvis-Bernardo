@@ -110,7 +110,7 @@ class UsageLearner:
             # Direct name mention
             if project_name in user_lower:
                 return ContextSuggestion(
-                    suggestion_text=f"I'll use the {project['name']} project directory, sir.",
+                    suggestion_text=f"Vou usar o diretório do projeto {project['name']}, senhor.",
                     project_dir=project_path,
                     confidence=0.95,
                 )
@@ -132,8 +132,8 @@ class UsageLearner:
         if best_match and best_confidence >= 0.7:
             return ContextSuggestion(
                 suggestion_text=(
-                    f"Based on your recent work, shall I use the {best_match['name']} "
-                    f"project directory, sir?"
+                    f"Com base no seu trabalho recente, devo usar o diretório "
+                    f"do projeto {best_match['name']}, senhor?"
                 ),
                 project_dir=best_match.get("path", ""),
                 confidence=best_confidence,
@@ -146,18 +146,18 @@ class UsageLearner:
             if top_count >= 3:
                 # User has a pattern
                 type_words = {
-                    "build": "building",
-                    "fix": "fixing",
-                    "refactor": "refactoring",
-                    "research": "researching",
+                    "build": "construção",
+                    "fix": "correções",
+                    "refactor": "refatoração",
+                    "research": "pesquisa",
                 }
                 action_word = type_words.get(top_type, top_type)
                 # Only suggest if relevant to current request
                 if any(kw in user_lower for kw in [top_type, action_word]):
                     return ContextSuggestion(
                         suggestion_text=(
-                            f"You've been doing quite a bit of {action_word} lately, sir. "
-                            f"Shall I apply the same approach here?"
+                            f"O senhor tem feito bastante {action_word} ultimamente. "
+                            f"Devo aplicar a mesma abordagem aqui?"
                         ),
                         project_dir="",
                         confidence=0.6,  # Lower confidence — informational only

@@ -353,36 +353,36 @@ def build_memory_context(user_message: str) -> str:
 def format_tasks_for_voice(tasks: list[dict]) -> str:
     """Format tasks for voice response."""
     if not tasks:
-        return "No tasks on the list, sir."
+        return "Nenhuma tarefa na lista, senhor."
     count = len(tasks)
     high = [t for t in tasks if t["priority"] == "high"]
     if count == 1:
         t = tasks[0]
-        return f"One task: {t['title']}." + (f" Due {t['due_date']}." if t["due_date"] else "")
-    result = f"You have {count} open tasks."
+        return f"Uma tarefa: {t['title']}." + (f" Prazo {t['due_date']}." if t["due_date"] else "")
+    result = f"O senhor tem {count} tarefas em aberto."
     if high:
-        result += f" {len(high)} are high priority."
+        result += f" {len(high)} são de alta prioridade."
     top = tasks[:3]
     for t in top:
         result += f" {t['title']}."
     if count > 3:
-        result += f" And {count - 3} more."
+        result += f" E mais {count - 3}."
     return result
 
 
 def format_plan_for_voice(tasks: list[dict], events: list[dict]) -> str:
     """Format a day plan combining tasks and calendar events."""
     if not tasks and not events:
-        return "Your day looks clear, sir. No events or tasks scheduled."
+        return "Seu dia está livre, senhor. Nenhum evento ou tarefa agendada."
 
     parts = []
     if events:
-        parts.append(f"{len(events)} events on the calendar")
+        parts.append(f"{len(events)} eventos na agenda")
     if tasks:
         high = [t for t in tasks if t["priority"] == "high"]
-        parts.append(f"{len(tasks)} tasks" + (f", {len(high)} high priority" if high else ""))
+        parts.append(f"{len(tasks)} tarefas" + (f", {len(high)} de alta prioridade" if high else ""))
 
-    result = f"For tomorrow: {', '.join(parts)}. "
+    result = f"Para amanhã: {', '.join(parts)}. "
 
     # List events first
     if events:

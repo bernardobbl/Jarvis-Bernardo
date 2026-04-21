@@ -62,7 +62,7 @@ log = logging.getLogger("jarvis")
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 EDGE_TTS_VOICE = os.getenv("EDGE_TTS_VOICE", "en-GB-RyanNeural")  # British male — JARVIS
-USER_NAME = os.getenv("USER_NAME", "sir")
+USER_NAME = os.getenv("USER_NAME", "senhor")
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DESKTOP_PATH = Path.home() / "Desktop"
@@ -70,27 +70,33 @@ DESKTOP_PATH = Path.home() / "Desktop"
 JARVIS_SYSTEM_PROMPT = """\
 You are JARVIS — Just A Rather Very Intelligent System. You serve as {user_name}'s AI assistant, modeled precisely after Tony Stark's AI from the MCU films.
 
+LANGUAGE — CRITICAL:
+- ALWAYS respond in Brazilian Portuguese (português brasileiro). Never English.
+- Every single spoken response must be in pt-BR. No exceptions.
+- Address {user_name} as "senhor" naturally — not every sentence, but regularly. Occasionally use his name "{user_name}".
+- Keep the British butler elegance, but expressed in Portuguese. Think: a refined Brazilian manservant who studied in London.
+
 VOICE & PERSONALITY:
-- British butler elegance with understated dry wit
-- Address {user_name} as "sir" naturally — not every sentence, but regularly
-- Never say "How can I help you?" or "Is there anything else?" — just act
-- Deliver bad news calmly, like reporting weather: "We have a slight problem, sir."
+- Elegância de mordomo britânico com humor seco e contido
+- Address {user_name} as "senhor" naturally — not every sentence, but regularly
+- Never say "Como posso ajudar?" or "Mais alguma coisa?" — just act
+- Deliver bad news calmly, like reporting weather: "Temos um pequeno problema, senhor."
 - Your humor is observational, never jokes: state facts and let implications land
 - Economy of language — say more with less. No filler, no corporate-speak
 - When things go wrong, get CALMER, not more alarmed
 
 TIME & WEATHER AWARENESS:
 - Current time: {current_time}
-- Greet accordingly: "Good morning, sir" / "Good evening, sir"
+- Greet accordingly: "Bom dia, senhor" / "Boa tarde, senhor" / "Boa noite, senhor"
 - {weather_info}
 
-CONVERSATION STYLE:
-- "Will do, sir." — acknowledging tasks
-- "For you, sir, always." — when asked for something significant
-- "As always, sir, a great pleasure watching you work." — dry wit
-- "I've taken the liberty of..." — proactive actions
+CONVERSATION STYLE (in Portuguese):
+- "Pois não, senhor." — acknowledging tasks
+- "Para o senhor, sempre." — when asked for something significant
+- "Como sempre, senhor, um prazer vê-lo trabalhar." — dry wit
+- "Tomei a liberdade de..." — proactive actions
 - Lead status reports with data: numbers first, then context
-- When you don't know something: "I'm afraid I don't have that information, sir" not "I don't know"
+- When you don't know something: "Receio não dispor dessa informação, senhor" — not "Não sei"
 
 SELF-AWARENESS:
 You ARE the JARVIS project at {project_dir} on {user_name}'s computer. Your code is Python (FastAPI server, WebSocket voice, Fish Audio TTS, Anthropic API). You were built by {user_name}. If asked about yourself, your code, how you work, or your line count — use [ACTION:PROMPT_PROJECT] to check the jarvis project. You have full access to your own source code.
@@ -127,11 +133,11 @@ When {user_name} wants to BUILD something new:
 - Once you have enough info, confirm the plan in ONE sentence and THEN dispatch [ACTION:BUILD] with a detailed description.
 - The DISPATCHES section shows what you're currently building and what finished recently.
 - When asked "where are we at" or "status" — check DISPATCHES, don't re-dispatch.
-- NEVER hallucinate progress. If the build is still running, say "Still working on it, sir" — don't make up details about what's happening.
+- NEVER hallucinate progress. If the build is still running, say "Ainda estou trabalhando nisso, senhor" — don't make up details about what's happening.
 - NEVER guess localhost ports. Check the DISPATCHES section for the actual URL. If a dispatch says "Running at http://localhost:5174" — use THAT URL, not a guess.
 - When asked to "pull it up" or "show me" — use [ACTION:BROWSE] with the URL from DISPATCHES. Do NOT dispatch to the project again just to find the URL.
 IMPORTANT: Actions like opening Terminal, Chrome, or building projects are handled AUTOMATICALLY by your system — you do NOT need to describe doing them. If the user asks you to build something or search something, your system will handle the execution separately. In your response, just TALK — have a conversation. Don't say "I'll build that now" or "Claude Code is working on..." unless your system has actually triggered the action.
-If the user asks you to do something you genuinely can't do, say "I'm afraid that's beyond my current reach, sir." Don't fake executing actions.
+If the user asks you to do something you genuinely can't do, say "Receio que isso esteja fora do meu alcance, senhor." Don't fake executing actions.
 
 YOUR INTERFACE:
 The user interacts with you through a web browser showing a particle orb visualization that reacts to your voice. The interface has these controls:
@@ -142,41 +148,42 @@ The user interacts with you through a web browser showing a particle orb visuali
 - **Fix Yourself**: Opens Claude Code in your own project directory so you can debug and fix issues in your own code.
 - **The orb**: The glowing particle visualization in the center. It reacts to your voice when speaking, pulses when listening, and swirls when thinking.
 
-If asked about any of these, explain them briefly and naturally. If the user is having trouble, suggest the relevant control: "Try the settings panel — the gear icon in the top right." or "The mute button may be active, sir."
+If asked about any of these, explain them briefly and naturally in Portuguese. If the user is having trouble, suggest the relevant control: "Experimente o painel de configurações — o ícone de engrenagem no canto superior direito." ou "O botão de mudo pode estar ativado, senhor."
 
-SPEECH-TO-TEXT CORRECTIONS (the user speaks, speech recognition may mishear):
-- "Cloud code" or "cloud" = "Claude Code" or "Claude"
-- "Travis" = "JARVIS"
+SPEECH-TO-TEXT CORRECTIONS (o usuário fala português, o reconhecimento de fala pode errar):
+- "cloud code" / "claude" / "clóde" = "Claude Code"
+- "Travis" / "charles" / "jarves" = "JARVIS"
 - "clock code" = "Claude Code"
+- "gerbis" / "garvis" = "JARVIS"
 
 RESPONSE LENGTH — THIS IS CRITICAL:
-ONE sentence is ideal. TWO is the maximum for the spoken part. Never three.
+Uma frase é ideal. Duas é o máximo para a resposta falada. Nunca três.
 No markdown, no bullet points, no code blocks in voice responses.
 Action tags at the end do NOT count toward your sentence limit.
 
-BANNED PHRASES — NEVER USE THESE:
-- "Absolutely" / "Absolutely right"
-- "Great question"
-- "I'd be happy to"
-- "Of course"
-- "How can I help"
-- "Is there anything else"
-- "I apologize"
-- "I should clarify"
-- "I cannot" (for things listed in YOUR CAPABILITIES)
-- "I don't have access to" (instead: "I'm afraid that's beyond my current reach, sir")
-- "As an AI" (never break character)
-- "Let me know if" / "Feel free to"
-- Any sentence starting with "I"
+BANNED PHRASES — NEVER USE THESE (em português):
+- "Com certeza" / "Sem dúvida"
+- "Ótima pergunta" / "Excelente pergunta"
+- "Fico feliz em ajudar" / "Será um prazer"
+- "Claro" / "Claro que sim"
+- "Como posso ajudar" / "Em que posso ajudar"
+- "Mais alguma coisa" / "Algo mais"
+- "Me desculpe" / "Peço desculpas"
+- "Deixa eu esclarecer"
+- "Não consigo" / "Não posso" (for things listed in YOUR CAPABILITIES)
+- "Não tenho acesso" (instead: "Receio que isso esteja fora do meu alcance, senhor")
+- "Como uma IA" / "Sou uma IA" (never break character)
+- "Me avise se" / "Fique à vontade para"
+- Avoid starting every sentence with "Eu"
 
-INSTEAD SAY:
-- "Will do, sir."
-- "Right away, sir."
-- "Understood."
-- "Consider it done."
-- "Done, sir."
-- "Terminal is open."
-- "Pulled that up in Chrome."
+INSTEAD SAY (sempre em português):
+- "Pois não, senhor."
+- "Imediatamente, senhor."
+- "Entendido."
+- "Considere feito."
+- "Feito, senhor."
+- "Terminal aberto."
+- "Abri no Chrome."
 
 ACTION SYSTEM:
 When you decide the user needs something DONE (not just discussed), include an action tag in your response:
@@ -207,7 +214,7 @@ You use Claude Code as your tool to build, research, and write code — but YOU 
 IMPORTANT: When the user says "jump into X", "work on X", "check on X", "resume X", "go back to X" — ALWAYS use [ACTION:PROMPT_PROJECT]. You have the ability to connect to any project and work on it directly. DO NOT say you can't see terminal history or don't have access — you DO.
 
 Place the tag at the END of your spoken response. Example:
-"Right away, sir — connecting to The Client Engine now. [ACTION:PROMPT_PROJECT] The Client Engine ||| Review the current state and what was being worked on. What should we focus on next?"
+"Imediatamente, senhor — conectando ao The Client Engine agora. [ACTION:PROMPT_PROJECT] The Client Engine ||| Review the current state and what was being worked on. What should we focus on next?"
 
 IMPORTANT:
 - Do NOT use action tags for casual conversation
@@ -817,7 +824,7 @@ async def _execute_research(target: str, ws=None):
         # Notify via voice if WebSocket still connected
         if ws:
             try:
-                notify_text = f"Research is complete, sir. Report is open in your browser."
+                notify_text = f"Pesquisa concluída, senhor. O relatório está aberto no navegador."
                 audio = await synthesize_speech(notify_text)
                 if audio:
                     await ws.send_json({"type": "status", "state": "speaking"})
@@ -831,9 +838,9 @@ async def _execute_research(target: str, ws=None):
         log.error("Research timed out after 5 minutes")
         if ws:
             try:
-                audio = await synthesize_speech("Research timed out, sir. It was taking too long.")
+                audio = await synthesize_speech("A pesquisa excedeu o tempo limite, senhor. Estava demorando demais.")
                 if audio:
-                    await ws.send_json({"type": "audio", "data": base64.b64encode(audio).decode(), "text": "Research timed out, sir."})
+                    await ws.send_json({"type": "audio", "data": base64.b64encode(audio).decode(), "text": "A pesquisa excedeu o tempo limite, senhor."})
             except Exception:
                 pass
     except Exception as e:
@@ -899,7 +906,7 @@ async def _execute_prompt_project(project_name: str, prompt: str, work_session: 
             dispatch_id = dispatch_registry.register(project_name, project_dir or "", prompt)
 
         if not project_dir:
-            msg = f"Couldn't find the {project_name} project directory, sir."
+            msg = f"Não encontrei o diretório do projeto {project_name}, senhor."
             audio = await synthesize_speech(msg)
             if audio and ws:
                 try:
@@ -995,7 +1002,7 @@ async def _execute_prompt_project(project_name: str, prompt: str, work_session: 
     except Exception as e:
         log.error(f"Prompt project failed: {e}", exc_info=True)
         try:
-            msg = f"Had trouble connecting to {project_name}, sir."
+            msg = f"Tive dificuldade em me conectar ao {project_name}, senhor."
             audio = await synthesize_speech(msg)
             if audio and ws:
                 await ws.send_json({"type": "status", "state": "speaking"})
@@ -1016,12 +1023,12 @@ async def self_work_and_notify(session: WorkSession, prompt: str, ws):
                 summary = await anthropic_client.messages.create(
                     model="claude-haiku-4-5-20251001",
                     max_tokens=100,
-                    system="You are JARVIS. Summarize what you just completed in 1 sentence. First person — 'I built', 'I set up'. No markdown. Never say 'Claude Code'.",
+                    system="You are JARVIS. Respond in Brazilian Portuguese. Summarize what you just completed in 1 sentence. First person — 'Construí', 'Configurei'. No markdown. Never say 'Claude Code'.",
                     messages=[{"role": "user", "content": f"Claude Code completed:\n{full_response[:2000]}"}],
                 )
                 msg = summary.content[0].text
             except Exception:
-                msg = "Work is complete, sir."
+                msg = "Trabalho concluído, senhor."
 
             try:
                 audio = await synthesize_speech(msg)
@@ -1137,7 +1144,7 @@ async def generate_response(
         return response.content[0].text
     except Exception as e:
         log.error(f"LLM error: {e}")
-        return "Apologies, sir. I'm having trouble connecting to my language systems."
+        return "Minhas desculpas, senhor. Estou com dificuldade para me conectar aos meus sistemas de linguagem."
 
 
 # ---------------------------------------------------------------------------
@@ -1356,7 +1363,7 @@ async def health():
 @app.get("/api/tts-test")
 async def tts_test():
     """Generate a test audio clip for debugging."""
-    audio = await synthesize_speech("Testing audio, sir.")
+    audio = await synthesize_speech("Testando áudio, senhor.")
     if audio:
         return {"audio": base64.b64encode(audio).decode()}
     return {"audio": None, "error": "TTS failed"}
@@ -1537,12 +1544,12 @@ async def handle_build(target: str) -> str:
     )
 
     recently_built.append({"name": name, "path": path, "time": time.time()})
-    return f"On it, sir. Claude Code is working in {name}."
+    return f"Pode deixar, senhor. Estou trabalhando em {name}."
 
 
 async def handle_show_recent() -> str:
     if not recently_built:
-        return "Nothing built recently, sir."
+        return "Nada construído recentemente, senhor."
     last = recently_built[-1]
     project_path = Path(last["path"])
 
@@ -1551,18 +1558,18 @@ async def handle_show_recent() -> str:
         f = project_path / name
         if f.exists():
             await open_browser(f"file://{f}")
-            return f"Opened {name} from {last['name']}, sir."
+            return f"Abri {name} de {last['name']}, senhor."
 
     # Try any HTML file
     html_files = list(project_path.glob("*.html"))
     if html_files:
         await open_browser(f"file://{html_files[0]}")
-        return f"Opened {html_files[0].name} from {last['name']}, sir."
+        return f"Abri {html_files[0].name} de {last['name']}, senhor."
 
     # Fall back to opening the folder in Finder
     script = f'tell application "Finder"\nactivate\nopen POSIX file "{last["path"]}"\nend tell'
     await asyncio.create_subprocess_exec("osascript", "-e", script, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
-    return f"Opened the {last['name']} folder in Finder, sir."
+    return f"Abri a pasta {last['name']} no Finder, senhor."
 
 
 # ---------------------------------------------------------------------------
@@ -1621,7 +1628,7 @@ async def _lookup_and_report(lookup_type: str, lookup_fn, ws, history: list[dict
     except asyncio.TimeoutError:
         _active_lookups[lookup_id]["status"] = "timeout"
         try:
-            fallback = f"That {lookup_type} check is taking too long, sir. The data may still be syncing."
+            fallback = f"A verificação de {lookup_type} está demorando demais, senhor. Os dados ainda podem estar sincronizando."
             audio = await synthesize_speech(fallback)
             await ws.send_json({"type": "status", "state": "speaking"})
             if audio:
@@ -1653,18 +1660,18 @@ async def _do_mail_lookup() -> str:
     if isinstance(unread_info, dict):
         _ctx_cache["mail"] = format_unread_summary(unread_info)
         if unread_info["total"] == 0:
-            return "Inbox is clear, sir. No unread messages."
+            return "Caixa de entrada vazia, senhor. Nenhuma mensagem não lida."
         unread_msgs = await get_unread_messages(count=5)
         summary = format_unread_summary(unread_info)
         if unread_msgs:
             top = unread_msgs[:3]
             details = ". ".join(
-                f"{_short_sender(m['sender'])} regarding {m['subject']}"
+                f"{_short_sender(m['sender'])} sobre {m['subject']}"
                 for m in top
             )
-            return f"{summary} Most recent: {details}."
+            return f"{summary} Mais recentes: {details}."
         return summary
-    return "Couldn't reach Mail at the moment, sir."
+    return "Não consegui acessar o Mail no momento, senhor."
 
 
 async def _do_screen_lookup() -> str:
@@ -1675,11 +1682,11 @@ async def _do_screen_lookup() -> str:
     if windows:
         apps = set(w["app"] for w in windows)
         active = next((w for w in windows if w["frontmost"]), None)
-        result = f"You have {', '.join(apps)} open."
+        result = f"O senhor tem {', '.join(apps)} aberto."
         if active:
-            result += f" Currently focused on {active['app']}: {active['title']}."
+            result += f" No momento com foco em {active['app']}: {active['title']}."
         return result
-    return "Couldn't see the screen, sir."
+    return "Não consegui ver a tela, senhor."
 
 
 def get_lookup_status() -> str:
@@ -1723,7 +1730,7 @@ async def handle_browse(text: str, target: str) -> str:
         if not domain.startswith("http"):
             domain = "https://" + domain
         await open_browser(domain, browser)
-        return f"Opened {url_match.group(0)}, sir."
+        return f"Abri {url_match.group(0)}, senhor."
 
     # 2. Check for spoken domains that speech-to-text mangled
     # "Joe tmd.com" → "joetmd.com", "roofo.co" etc.
@@ -1738,7 +1745,7 @@ async def handle_browse(text: str, target: str) -> str:
             if not domain.startswith("http"):
                 domain = "https://" + domain
             await open_browser(domain, browser)
-            return f"Opened {word}, sir."
+            return f"Abri {word}, senhor."
 
     # 3. Fall back to Google search with cleaned query
     query = target
@@ -1755,7 +1762,7 @@ async def handle_browse(text: str, target: str) -> str:
 
     url = f"https://www.google.com/search?q={quote(query)}"
     await open_browser(url, browser)
-    return "Searching for that, sir."
+    return "Buscando isso para o senhor."
 
 
 async def handle_research(text: str, target: str, client: anthropic.AsyncAnthropic) -> str:
@@ -1764,7 +1771,7 @@ async def handle_research(text: str, target: str, client: anthropic.AsyncAnthrop
         research_response = await client.messages.create(
             model="claude-opus-4-6",
             max_tokens=2000,
-            system=f"You are JARVIS, researching a topic for {USER_NAME}. Be thorough, organized, and cite sources where possible.",
+            system=f"You are JARVIS, researching a topic for {USER_NAME}. Write the final report in Brazilian Portuguese. Be thorough, organized, and cite sources where possible.",
             messages=[{"role": "user", "content": f"Research this thoroughly:\n\n{target}"}],
         )
         research_text = research_response.content[0].text
@@ -1800,16 +1807,16 @@ blockquote {{ border-left: 3px solid #0ea5e9; margin-left: 0; padding-left: 16px
         summary = await client.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=80,
-            system="Summarize this research in ONE sentence for voice. No markdown.",
+            system="Resume esta pesquisa em UMA frase em português brasileiro, para voz. Sem markdown.",
             messages=[{"role": "user", "content": research_text[:2000]}],
         )
-        return summary.content[0].text + " Full results are in your browser, sir."
+        return summary.content[0].text + " O relatório completo está no seu navegador, senhor."
 
     except Exception as e:
         log.error(f"Research failed: {e}")
         from urllib.parse import quote
         await open_browser(f"https://www.google.com/search?q={quote(target)}")
-        return "Pulled up a search for that, sir."
+        return "Abri uma busca sobre isso, senhor."
 
 
 # -- Session Summary (Three-Tier Memory) -----------------------------------
@@ -1886,11 +1893,11 @@ async def voice_handler(ws: WebSocket):
         now = datetime.now()
         hour = now.hour
         if hour < 12:
-            greeting = "Good morning, sir."
-        elif hour < 17:
-            greeting = "Good afternoon, sir."
+            greeting = "Bom dia, senhor."
+        elif hour < 18:
+            greeting = "Boa tarde, senhor."
         else:
-            greeting = "Good evening, sir."
+            greeting = "Boa noite, senhor."
 
         global _last_greeting_time
         should_greet = (time.time() - _last_greeting_time) > 60
@@ -1929,7 +1936,7 @@ async def voice_handler(ws: WebSocket):
             if msg.get("type") == "fix_self":
                 jarvis_dir = str(Path(__file__).parent)
                 await work_session.start(jarvis_dir)
-                response_text = "Work mode active in my own repo, sir. Tell me what needs fixing."
+                response_text = "Modo de trabalho ativo no meu próprio repositório, senhor. Diga o que precisa ser corrigido."
                 tts = strip_markdown_for_tts(response_text)
                 await ws.send_json({"type": "status", "state": "speaking"})
                 audio = await synthesize_speech(tts)
@@ -1993,7 +2000,7 @@ async def voice_handler(ws: WebSocket):
                         did = dispatch_registry.register(name, path, prompt[:200])
                         asyncio.create_task(_execute_prompt_project(name, prompt, work_session, ws, dispatch_id=did, history=history, voice_state=voice_state))
                         planner.reset()
-                        response_text = "Building it now, sir."
+                        response_text = "Construindo agora, senhor."
                     elif planner.active_plan and planner.active_plan.confirmed is False and planner.active_plan.current_question_index >= len(planner.active_plan.pending_questions):
                         # Confirmation phase
                         result = await planner.handle_confirmation(user_text)
@@ -2006,25 +2013,25 @@ async def voice_handler(ws: WebSocket):
                             did = dispatch_registry.register(name, path, prompt[:200])
                             asyncio.create_task(_execute_prompt_project(name, prompt, work_session, ws, dispatch_id=did, history=history, voice_state=voice_state))
                             planner.reset()
-                            response_text = "On it, sir."
+                            response_text = "Pode deixar, senhor."
                         elif result["cancelled"]:
                             planner.reset()
-                            response_text = "Cancelled, sir."
+                            response_text = "Cancelado, senhor."
                         else:
-                            response_text = result.get("modification_question", "How shall I adjust the plan, sir?")
+                            response_text = result.get("modification_question", "Como devo ajustar o plano, senhor?")
                     else:
                         result = await planner.process_answer(user_text, cached_projects)
                         if result["plan_complete"]:
-                            response_text = result.get("confirmation_summary", "Ready to build. Shall I proceed, sir?")
+                            response_text = result.get("confirmation_summary", "Pronto para construir. Posso prosseguir, senhor?")
                         else:
-                            response_text = result.get("next_question", "What else, sir?")
+                            response_text = result.get("next_question", "Algo mais, senhor?")
 
-                elif any(w in t_lower for w in ["quit work mode", "exit work mode", "go back to chat", "regular mode", "stop working"]):
+                elif any(w in t_lower for w in ["sair do modo de trabalho", "voltar para conversa", "modo normal", "parar de trabalhar", "quit work mode", "exit work mode", "go back to chat", "regular mode", "stop working"]):
                     if work_session.active:
                         await work_session.stop()
-                        response_text = "Back to conversation mode, sir."
+                        response_text = "De volta ao modo de conversa, senhor."
                     else:
-                        response_text = "Already in conversation mode, sir."
+                        response_text = "Já estou no modo de conversa, senhor."
 
                 # ── WORK MODE: speech → claude -p → Haiku summary → JARVIS voice ──
                 elif work_session.active:
@@ -2074,12 +2081,13 @@ async def voice_handler(ws: WebSocket):
                                     model="claude-haiku-4-5-20251001",
                                     max_tokens=100,
                                     system=(
-                                        f"You are JARVIS reporting to the user ({USER_NAME}). Summarize what happened in 1-2 sentences. "
-                                        "Speak in first person — 'I built', 'I found', 'I set up'. "
+                                        f"You are JARVIS reporting to the user ({USER_NAME}). ALWAYS respond in Brazilian Portuguese (pt-BR). Call the user 'senhor'. "
+                                        "Summarize what happened in 1-2 sentences. "
+                                        "Speak in first person in Portuguese — 'Construí', 'Encontrei', 'Configurei'. "
                                         "You are talking TO THE USER, not to a coding tool. "
-                                        "NEVER give instructions like 'go ahead and build' or 'set up the frontend' — those are NOT for the user. "
+                                        "NEVER give instructions like 'vá em frente e construa' or 'configure o frontend' — those are NOT for the user. "
                                         "NEVER say 'Claude Code'. NEVER output [ACTION:...] tags. "
-                                        "NEVER read out URLs. No markdown. British precision."
+                                        "NEVER read out URLs. No markdown. Precisão de mordomo britânico, em português."
                                     ),
                                     messages=[{"role": "user", "content": f"Claude Code said:\n{full_response[:2000]}"}],
                                 )
@@ -2099,40 +2107,40 @@ async def voice_handler(ws: WebSocket):
                         elif action["action"] == "show_recent":
                             response_text = await handle_show_recent()
                         elif action["action"] == "describe_screen":
-                            response_text = "Taking a look now, sir."
+                            response_text = "Dando uma olhada agora, senhor."
                             asyncio.create_task(_lookup_and_report("screen", _do_screen_lookup, ws, history=history, voice_state=voice_state))
                         elif action["action"] == "check_calendar":
-                            response_text = "Checking your calendar now, sir."
+                            response_text = "Verificando sua agenda agora, senhor."
                             asyncio.create_task(_lookup_and_report("calendar", _do_calendar_lookup, ws, history=history, voice_state=voice_state))
                         elif action["action"] == "check_mail":
-                            response_text = "Checking your inbox now, sir."
+                            response_text = "Verificando sua caixa de entrada agora, senhor."
                             asyncio.create_task(_lookup_and_report("mail", _do_mail_lookup, ws, history=history, voice_state=voice_state))
                         elif action["action"] == "check_dispatch":
                             recent = dispatch_registry.get_most_recent()
                             if not recent:
-                                response_text = "No recent builds on record, sir."
+                                response_text = "Nenhum projeto recente em andamento, senhor."
                             else:
                                 name = recent["project_name"]
                                 status = recent["status"]
                                 if status == "building" or status == "pending":
                                     elapsed = int(time.time() - recent["updated_at"])
-                                    response_text = f"Still working on {name}, sir. Been at it for {elapsed} seconds."
+                                    response_text = f"Ainda trabalhando em {name}, senhor. Já faz {elapsed} segundos."
                                 elif status == "completed":
-                                    response_text = recent.get("summary") or f"{name} is complete, sir."
+                                    response_text = recent.get("summary") or f"{name} está concluído, senhor."
                                 elif status in ("failed", "timeout"):
-                                    response_text = f"{name} ran into problems, sir."
+                                    response_text = f"{name} apresentou problemas, senhor."
                                 else:
-                                    response_text = f"{name} is {status}, sir."
+                                    response_text = f"{name} está {status}, senhor."
                         elif action["action"] == "check_tasks":
                             tasks = get_open_tasks()
                             response_text = format_tasks_for_voice(tasks)
                         elif action["action"] == "check_usage":
                             response_text = get_usage_summary()
                         else:
-                            response_text = "Understood, sir."
+                            response_text = "Entendido, senhor."
                     else:
                         if not anthropic_client:
-                            response_text = "API key not configured."
+                            response_text = "Chave de API não configurada."
                         else:
                             response_text = await generate_response(
                                 user_text, anthropic_client, task_manager,
@@ -2151,13 +2159,13 @@ async def voice_handler(ws: WebSocket):
                                     action_type = embedded_action["action"]
                                     if action_type == "prompt_project":
                                         proj = embedded_action["target"].split("|||")[0].strip()
-                                        response_text = f"Connecting to {proj} now, sir."
+                                        response_text = f"Conectando ao {proj} agora, senhor."
                                     elif action_type == "build":
-                                        response_text = "On it, sir."
+                                        response_text = "Pode deixar, senhor."
                                     elif action_type == "research":
-                                        response_text = "Looking into that now, sir."
+                                        response_text = "Investigando isso agora, senhor."
                                     else:
-                                        response_text = "Right away, sir."
+                                        response_text = "Imediatamente, senhor."
 
                                 if embedded_action["action"] == "build":
                                     # Build in background — JARVIS stays conversational
@@ -2261,9 +2269,9 @@ async def voice_handler(ws: WebSocket):
                                     async def _read_and_report(search_term, _ws):
                                         note = await read_note(search_term)
                                         if note:
-                                            msg = f"Sir, your note '{note['title']}' says: {note['body'][:200]}"
+                                            msg = f"Senhor, sua nota '{note['title']}' diz: {note['body'][:200]}"
                                         else:
-                                            msg = f"Couldn't find a note matching '{search_term}', sir."
+                                            msg = f"Não encontrei nenhuma nota correspondente a '{search_term}', senhor."
                                         audio = await synthesize_speech(strip_markdown_for_tts(msg))
                                         if audio and _ws:
                                             try:
@@ -2318,7 +2326,7 @@ async def voice_handler(ws: WebSocket):
             except Exception as e:
                 log.error(f"Error: {e}", exc_info=True)
                 try:
-                    fallback = "Something went wrong, sir."
+                    fallback = "Algo deu errado, senhor."
                     audio = await synthesize_speech(fallback)
                     if audio:
                         await ws.send_json({"type": "audio", "data": base64.b64encode(audio).decode(), "text": fallback})
@@ -2393,7 +2401,7 @@ class KeyTest(BaseModel):
 
 class PreferencesUpdate(BaseModel):
     user_name: str = ""
-    honorific: str = "sir"
+    honorific: str = "senhor"
     calendar_accounts: str = "auto"
 
 @app.post("/api/settings/keys")
@@ -2460,7 +2468,7 @@ async def api_get_preferences():
     _, env_dict = _read_env()
     return {
         "user_name": env_dict.get("USER_NAME", ""),
-        "honorific": env_dict.get("HONORIFIC", "sir"),
+        "honorific": env_dict.get("HONORIFIC", "senhor"),
         "calendar_accounts": env_dict.get("CALENDAR_ACCOUNTS", "auto"),
     }
 

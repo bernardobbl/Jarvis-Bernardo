@@ -110,8 +110,8 @@ def _check_favicon(path: Path, task_type: str) -> Optional[Suggestion]:
 
     return Suggestion(
         text=(
-            "That's done, sir. I noticed the project doesn't have a favicon. "
-            "Shall I add one?"
+            "Pronto, senhor. Notei que o projeto não tem um favicon. "
+            "Devo adicionar um?"
         ),
         action_type="favicon",
         action_details={
@@ -160,8 +160,8 @@ def _check_tests(path: Path, task_type: str) -> Optional[Suggestion]:
 
     return Suggestion(
         text=(
-            "The implementation looks good, sir. "
-            "I notice there aren't any tests yet. Shall I write some?"
+            "A implementação está boa, senhor. "
+            "Noto que ainda não há testes. Devo escrever alguns?"
         ),
         action_type="tests",
         action_details={
@@ -194,8 +194,8 @@ def _check_readme(path: Path, task_type: str) -> Optional[Suggestion]:
 
     return Suggestion(
         text=(
-            "If I may suggest, sir \u2014 the project has no README. "
-            "Want me to create one?"
+            "Se me permite sugerir, senhor \u2014 o projeto n\u00e3o tem um README. "
+            "Quer que eu crie um?"
         ),
         action_type="readme",
         action_details={
@@ -229,8 +229,8 @@ def _check_quality(qa_result: Optional[QAResult]) -> Optional[Suggestion]:
 
     return Suggestion(
         text=(
-            "Everything works, sir, but I noticed a few areas that could "
-            "use some tidying up. Shall I refactor?"
+            "Tudo funciona, senhor, mas notei algumas áreas que poderiam "
+            "ser ajustadas. Devo refatorar?"
         ),
         action_type="quality",
         action_details={
